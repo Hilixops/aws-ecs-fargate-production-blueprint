@@ -1,0 +1,62 @@
+# ==============================================================================
+# Configuration Template: AWS Apache Airflow Hybrid Blueprint (V5 Complete)
+# Copy this file to terraform.tfvars and populate with environment-specific values.
+# DO NOT commit real terraform.tfvars files to version control.
+# ==============================================================================
+
+# Global Project Settings
+aws_region   = "us-east-1"
+environment  = "production" # production | staging | dev
+project_name = "airflow-blueprint"
+
+# Networking Configuration (Multi-AZ)
+vpc_cidr             = "10.0.0.0/16"
+public_subnet_cidrs  = ["10.0.1.0/24", "10.0.2.0/24"]
+private_subnet_cidrs = ["10.0.10.0/24", "10.0.20.0/24"]
+
+# Port Specifications
+airflow_webserver_port = 8080
+postgres_port          = 5432
+clients_db_port        = 5432
+
+# Amazon RDS PostgreSQL Metadata Database
+db_name                    = "airflow"
+db_username                = "airflow_admin"
+db_password                = "ChangeThisProductionPassword123!" # Sensitive - use Secrets Manager in CI/CD
+db_instance_class          = "db.t4g.small"
+db_allocated_storage       = 20
+db_max_allocated_storage   = 100
+db_multi_az                = false # Set true for Multi-AZ automatic failover in production
+db_backup_retention_period = 7
+db_deletion_protection     = false # Set true in production to prevent accidental teardown
+db_skip_final_snapshot     = true  # Set false in production
+
+# Amazon S3 DAGs Storage
+dags_bucket_name          = null  # Set explicit name or null to use auto-generated bucket_prefix
+dags_bucket_force_destroy = false # Set true only in ephemeral dev/testing environments
+
+# Identity, Security & CI/CD (GitHub Actions OIDC)
+github_repo          = "hilixops/aws-ecs-fargate-production-blueprint"
+create_oidc_provider = true # Set false if account already has GitHub OIDC provider
+
+# Public Ingress & TLS (ALB & Route 53)
+domain_name     = null # e.g. "airflow.example.com"
+route53_zone_id = null # e.g. "Z0123456789EXAMPLE"
+certificate_arn = null # e.g. "arn:aws:acm:us-east-1:123456789012:certificate/..."
+
+# Airflow Core Compute (EC2 Private Control Plane)
+ec2_instance_type    = "t3.medium"
+ec2_root_volume_size = 50
+ec2_ami_id           = null # Defaults to latest official Amazon Linux 2023 x86_64
+
+# ECS Fargate Elastic Workers
+ecr_repository_name = "airflow-worker"
+worker_cpu          = 512  # 512 = 0.5 vCPU
+worker_memory       = 1024 # 1024 MiB = 1 GiB
+log_retention_days  = 30
+
+# Additional Resource Tags
+tags = {
+  Environment = "production"
+  Department  = "DataPlatform"
+}

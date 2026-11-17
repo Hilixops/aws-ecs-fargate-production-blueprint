@@ -1,0 +1,26 @@
+# Local Gemini Instructions and Memory
+GEMINI.md
+.gemini/
+
+# Terraform local state and runtime files
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+crash.log
+crash.*.log
+
+# Terraform variables & secrets (allow example)
+*.tfvars
+*.tfvars.json
+!terraform.tfvars.example
+
+# Terraform override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Operating System files
+.DS_Store
+Thumbs.db
